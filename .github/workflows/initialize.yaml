@@ -1,0 +1,66 @@
+name:  Initialize Repository
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  setup:
+    if: ${{ ! contains(github.repository, 'data-science-template') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4.5.0
+        with:
+          python-version: 3.x
+
+      - name: Remove not ready badge
+        shell: bash
+        run: |
+          echo "$(tail -n +2 README.md)" > README.md
+
+      - name: Update Repository Name
+        shell: bash
+        run: |
+          python template-setup/configure-cookie-cutter.py ${{github.event.repository.name}} ${{github.actor}} ./cookiecutter.json
+
+      - name: Install cookiecutter
+        run: pip install cookiecutter
+
+      - name: Hack cookiecutter to work with GH Actions
+        id: hack
+        working-directory: ${{ github.workspace }}/../
+        run: |
+          rm ${{ github.event.repository.name }}/.github/workflows/initialize.yaml
+          rm ${{ github.event.repository.name }}/template-setup/configure-cookie-cutter.py
+          mv ${{ github.event.repository.name }}/cookiecutter.json ./
+          mv ${{ github.event.repository.name }} '{{cookiecutter.repository}}'
+          echo "working_directory=$(pwd)" >> $GITHUB_OUTPUT
+
+      - name: Create repo from template
+        working-directory: ${{ steps.hack.outputs.working_directory }}/../
+        run: >
+          cookiecutter --verbose --no-input
+          ${{ github.event.repository.name }}
+          --output-dir ./${{ github.event.repository.name }}
+
+      - name: Create repo from template
+        working-directory: ${{ steps.hack.outputs.working_directory }}
+        run: |
+          ls -la
+
+      - name: Push changes to repo
+        shell: bash
+        run: |
+          git add --all
+          git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "fix: setup template repository [skip ci]"
+          git push --force

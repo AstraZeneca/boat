@@ -1,0 +1,134 @@
+name: PR Checks and Version Tracking
+
+on:
+  # push:
+  #   branches:
+  #     - main
+  #     - dev
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  set-version:
+    runs-on: azu-biopharmaceuticals-rd-self-hosted-linux
+    outputs:
+      python-version: ${{steps.python-version.outputs.version}}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: set python version
+        id: python-version
+        uses:  ./.github/set-version
+        with:
+          version: "3.10"
+
+  lint:
+    needs: set-version
+    if: (github.event_name == 'pull_request') && (! contains(github.event.repository.name, 'data-science-template'))
+    runs-on: azu-biopharmaceuticals-rd-self-hosted-linux
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{needs.set-version.outputs.python-version}}
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Install packages
+        shell: bash
+        run: |
+          poetry install --only dev
+
+      - name: run pre-commit checks on all files
+        shell: bash
+        run: |
+          poetry run pre-commit run --all-files
+
+  test:
+    needs: set-version
+    if: (! contains(github.event.repository.name, 'data-science-template')) && (! contains(github.event.head_commit.message, 'Initial commit'))
+    runs-on: azu-biopharmaceuticals-rd-self-hosted-linux
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Pytest your_feature
+        uses: ./.github/pytest-feature
+        with:
+          extras: ""
+          python-version: ${{needs.set-version.outputs.python-version}}
+          path: "tests"  # add the path to your independent feature test here
+          # artifactory-token: ${{ secrets.CAI_ARTIFACTORY_TOKEN }}  # make sure your repo has access to this secret
+          # wandb-token: ${{ secrets.CAI_WANDB }}  # make sure your repo has access to this secret
+
+  sonarqube:
+    name: SonarQube
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Coverage Data
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+
+      # Run SonarQube analysis only if the necessary secrets are set
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        if: env.SONAR_HOST_URL != '' && env.SONAR_TOKEN != ''
+
+  set-package-version:
+    needs: [lint,set-version,test]
+    if: (! contains(github.event.repository.name, 'data-science-template')) && (github.event_name == 'pull_request') && (github.head_ref != 'main') && (github.head_ref != 'dev')
+    runs-on: "azu-biopharmaceuticals-rd-self-hosted-linux"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{needs.set-version.outputs.python-version}}
+
+      - name: Increment Version
+        id: increment_version
+        uses: azu-ignite/az-action-semver@0.3.0
+        with:
+          unconventional_commit_strategy: "patch"
+          apply_tag: "false"
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Update package version
+        shell: bash
+        run: |
+          poetry version ${{ steps.increment_version.outputs.version }};
+
+      - name: Push changes to repo
+        shell: bash
+        run: |
+          echo ${{ github.head_ref }}
+          if [[ `git status --porcelain` ]]; then
+            git add pyproject.toml;
+            git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "docs: package version auto update";
+            git push --force;
+          else
+            echo "Nothing to update. We are already using the latest version.";
+          fi

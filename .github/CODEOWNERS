@@ -1,0 +1,6 @@
+# CAI-ENG will be requested for review when someone opens a pull request except for documentation:
+
+README.md
+docs
+mkdocs.yaml
+* @azu-biopharmaceuticals-rd/cai-eng

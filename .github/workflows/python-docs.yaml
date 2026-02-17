@@ -1,0 +1,23 @@
+---
+name: Build Documentation
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-docs:
+    if: |
+      ! contains(github.repository, 'data-science-template') &&
+      ! contains(github.event.head_commit.message, 'Initial commit')
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - run: |
+          pip install poetry
+          poetry install --only docs
+
+      - run: poetry run mkdocs gh-deploy --force

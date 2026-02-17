@@ -1,0 +1,40 @@
+name: Manual Pre-release Package Publishing
+
+on:
+  workflow_dispatch:
+    inputs:
+      pre-release-id:
+        description: 'Pre-release Id, e.g. a0, b0, b1.'
+        required: false
+        default: 'a0'
+      python-version:
+        description: 'Python version'
+        required: false
+        default: '3.10'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy-package:
+    if: github.ref == 'refs/heads/dev'
+    runs-on: azu-biopharmaceuticals-rd-self-hosted-linux
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get python version
+        run: echo "PYTHON_VERSION=${{ github.event.inputs.python-version }}" >> $GITHUB_ENV
+
+      - name: Get pre-release id
+        run: echo "PRE_RELEASE_ID=${{ github.event.inputs.pre-release-id }}" >> $GITHUB_ENV
+
+      - name: Get commit for pre-release suffix
+        run: echo "SHORT_SHA=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+
+      - name: Deploy pre-release package to JFrog
+        uses: ./.github/publish-package
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          tag: ${{ env.PRE_RELEASE_ID }}+${{ env.SHORT_SHA }}
+          token: ${{ secrets.CAI_ARTIFACTORY_TOKEN }}

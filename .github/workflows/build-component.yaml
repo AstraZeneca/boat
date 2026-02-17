@@ -1,0 +1,60 @@
+---
+name: Build Component Workflow
+
+on:
+  workflow_call:
+    inputs:
+      project-name:
+        # default: "your-project-name" # uncomment to add your default.
+        required: true # Comment/Remove if using a default value
+        type: string
+      image-name:
+        required: true
+        type: string
+      src-path:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      project-name:
+        # default: "your-project-name" # uncomment to add your default.
+        required: true # Comment/Remove if using a default value
+        type: string
+      image-name:
+        required: true
+        type: string
+      src-path:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+
+# Replace the Github token and artifactory token with the actual tokens.
+jobs:
+  build-component:
+    runs-on: azu-biopharmaceuticals-rd-self-hosted-linux
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Build and push component
+        uses: azu-ignite/az-action-registry@v4.2.0
+        with:
+          registry: harbor.csis.astrazeneca.net
+          image-name: ${{ inputs.project-name }}/${{ inputs.image-name }}
+          username: ${{secrets.CAI_HARBOR_USERNAME}}
+          password: ${{secrets.CAI_HARBOR_PASSWORD}}
+          tags:  ${{ inputs.tag }}
+          use-proxies: 'true'
+          needs-sudo: 'true'
+          dockerfile-name:
+            "${{ inputs.src-path }}/Dockerfile"
+          build-context:
+            "${{ inputs.src-path }}/"
+          build-secrets: |
+            github_token=${{secrets.GITHUB_PAT}}
+            artifactory_token=${{secrets.ARTIFACTORY_TOKEN}}

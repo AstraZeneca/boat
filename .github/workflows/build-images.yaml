@@ -1,0 +1,40 @@
+---
+name: Build Image
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+    paths:
+      - '.github/workflows/build-component.yaml'
+      - '.github/workflows/build-images.yaml'
+      - 'workflows/components/**'
+
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get tag
+        id: tag
+        # GitHub branch names have the same character subset execpt "/".
+        # This replaces "/" to "-" to get a valid tag
+        run: echo "tag=${GITHUB_REF_NAME////-}" >> $GITHUB_OUTPUT
+    outputs:
+      # For the 'main' branch always use the 'latest' tag,
+      # otherwise use the branch name as a tag
+      tag: ${{ github.ref_name == 'main' && 'latest' || steps.tag.outputs.tag }}
+
+#  Uncomment to build the images. Add one job for each component to be built.
+#  build-component-1:
+#    name: Build and push component 1
+#    needs: tag
+#    uses: ./.github/workflows/build-component.yaml
+#    with:
+#      project-name: your-harbor-project
+#      image-name: your-component-name
+#      src-path: ./workflows/components/your_component
+#      tag: ${{ needs.tag.outputs.tag }}
+#    secrets: inherit

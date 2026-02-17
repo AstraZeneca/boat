@@ -1,0 +1,28 @@
+name: Set version from file or default.
+description: "Set a python Version from a .python-version file or default value."
+
+inputs:
+  version:
+    required: true
+    description: Default version to set.
+  file-path:
+    required: false
+    default: .python-version
+    description: File containing version.
+outputs:
+  version:
+    description: "Set version"
+    value: ${{ steps.get-version.outputs.ACTION_VERSION }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get version from file or set to default.
+      id: get-version
+      shell: bash
+      run: |
+        if test -f ${{inputs.file-path}}; then
+          echo ACTION_VERSION=$(cat ${{inputs.file-path}}) >> "$GITHUB_OUTPUT"
+        else
+           echo ACTION_VERSION=${{inputs.version}} >> "$GITHUB_OUTPUT"
+        fi

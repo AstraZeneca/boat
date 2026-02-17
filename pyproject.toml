@@ -1,0 +1,583 @@
+[tool.poetry]
+name = "{{cookiecutter.repository}}"
+version = "0.0.0"
+description = ""
+authors = ["{{cookiecutter.author}}"]
+
+[tool.poetry.dependencies]
+# This version must also be changed in the ruff config.
+python = ">=3.10,<3.12"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "*"
+ruff = "^0.0.259"
+black = "^23.1.0"
+gitlint = "^0.19.1"
+mypy = "^1.1.1"
+
+[tool.poetry.group.test.dependencies]
+pytest = "*"
+pytest-cov = "*"
+pytest-reportlog = "*"
+pytest-mock = "*"
+coverage = ">=7.6.0"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = { version = "^1.3.0" }
+mkdocs-material = { version = "^9.0.0" }
+mkdocs-section-index = { version = "^0.3.4" }
+pymdown-extensions = "^10.0.1"
+mkdocstrings-python = "^1.10.7"
+pytkdocs = {extras = ["numpy-style"], version = "^0.16.1"}
+
+[[tool.poetry.source]]
+name = "artifactory"
+url = "https://artifactory.astrazeneca.com/artifactory/api/pypi/pypi-virtual/simple"
+priority = "explicit"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+###################################
+#
+#              SETTINGS
+#
+###################################
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"
+addopts = """
+--doctest-modules \
+--cov=. \
+--cov-append \
+--cov-report json:coverage.json \
+--cov-report xml:coverage.xml \
+"""
+testpaths = [
+    'tests',
+]
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+omit = [
+    'workflows/*',
+    'docs/*',
+]
+
+[tool.coverage.report]
+skip_covered = true
+skip_empty = true
+sort = 'Cover'
+
+[tool.black]
+line-length = 120
+
+[tool.ruff]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = ["D","E", "F","W","I001"]
+
+ignore = []
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["A", "B", "C", "D", "E", "F", "I"]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "__init__.py",
+    "setup.py",
+]
+per-file-ignores = {}
+
+# Builtins
+
+builtins=["__version__"]
+
+# Same as Black.
+line-length = 120
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.10.
+target-version = "py310"
+
+[tool.ruff.pydocstyle]
+# Always use numpy-style docstrings
+convention = "numpy"
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+[tool.pylint.main]
+# Specify a score threshold under which the program will exit with error.
+fail-under = 10
+
+# Files or directories to be skipped. They should be base names, not paths.
+ignore = ["third_party"]
+
+# Files or directories matching the regular expression patterns are skipped. The
+# regex matches against base names, not paths. The default value ignores Emacs
+# file locks
+ignore-patterns = ["venv/*"]
+
+# Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
+# number of processors available to use, and will cap the count on Windows to
+# avoid hangs.
+jobs = 4
+
+# Control the amount of potential inferred values when inferring a single object.
+# This can help the performance when dealing with large functions or complex,
+# nested conditions.
+limit-inference-results = 100
+
+# Pickle collected data for later comparisons.
+persistent = false
+
+# Minimum Python version to use for version dependent checks. Will default to the
+# version used to run pylint.
+py-version = "3.10"
+
+# When enabled, pylint would attempt to guess common misconfiguration and emit
+# user-friendly hints instead of false-positive error messages.
+suggestion-mode = true
+
+# Allow loading of arbitrary C extensions. Extensions are imported into the
+# active Python interpreter and may run arbitrary code.
+unsafe-load-any-extension = false
+
+[tool.pylint.basic]
+# Naming style matching correct argument names.
+argument-naming-style = "snake_case"
+
+# Regular expression matching correct argument names. Overrides argument-naming-
+# style. If left empty, argument names will be checked with the set naming style.
+argument-rgx = "^[a-z][a-z0-9_]*$"
+
+# Naming style matching correct attribute names.
+attr-naming-style = "snake_case"
+
+# Regular expression matching correct attribute names. Overrides attr-naming-
+# style. If left empty, attribute names will be checked with the set naming
+# style.
+attr-rgx = "^_{0,2}[a-z][a-z0-9_]*$"
+
+# Naming style matching correct class attribute names.
+class-attribute-naming-style = "any"
+
+# Regular expression matching correct class attribute names. Overrides class-
+# attribute-naming-style. If left empty, class attribute names will be checked
+# with the set naming style.
+class-attribute-rgx = "^(_?[A-Z][A-Z0-9_]*|__[a-z0-9_]+__|_?[a-z][a-z0-9_]*)$"
+
+# Naming style matching correct class constant names.
+class-const-naming-style = "UPPER_CASE"
+
+# Naming style matching correct class names.
+class-naming-style = "PascalCase"
+
+# Regular expression matching correct class names. Overrides class-naming-style.
+# If left empty, class names will be checked with the set naming style.
+class-rgx = "^_?[A-Z][a-zA-Z0-9]*$"
+
+# Naming style matching correct constant names.
+const-naming-style = "UPPER_CASE"
+
+# Regular expression matching correct constant names. Overrides const-naming-
+# style. If left empty, constant names will be checked with the set naming style.
+const-rgx = "^(_?[A-Z][A-Z0-9_]*|__[a-z0-9_]+__|_?[a-z][a-z0-9_]*)$"
+
+# Minimum line length for functions/classes that require docstrings, shorter ones
+# are exempt.
+docstring-min-length = 12
+
+# Naming style matching correct function names.
+function-naming-style = "snake_case"
+
+# Regular expression matching correct function names. Overrides function-naming-
+# style. If left empty, function names will be checked with the set naming style.
+function-rgx = "^(?:(?P<exempt>setUp|tearDown|setUpModule|tearDownModule)|(?P<camel_case>_?[A-Z][a-zA-Z0-9]*)|(?P<snake_case>_?[a-z][a-z0-9_]*))$"
+
+# Good variable names which should always be accepted, separated by a comma.
+good-names = ["main", "_"]
+
+# Include a hint for the correct naming format with invalid-name.
+include-naming-hint = false
+
+# Naming style matching correct inline iteration names.
+inlinevar-naming-style = "any"
+
+# Regular expression matching correct inline iteration names. Overrides
+# inlinevar-naming-style. If left empty, inline iteration names will be checked
+# with the set naming style.
+inlinevar-rgx = "^[a-z][a-z0-9_]*$"
+
+# Naming style matching correct method names.
+method-naming-style = "snake_case"
+
+# Regular expression matching correct method names. Overrides method-naming-
+# style. If left empty, method names will be checked with the set naming style.
+method-rgx = "(?x)^(?:(?P<exempt>_[a-z0-9_]+__|runTest|setUp|tearDown|setUpTestCase|tearDownTestCase|setupSelf|tearDownClass|setUpClass|(test|assert)_*[A-Z0-9][a-zA-Z0-9_]*|next)|(?P<camel_case>_{0,2}[A-Z][a-zA-Z0-9_]*)|(?P<snake_case>_{0,2}[a-z][a-z0-9_]*))$"
+
+# Naming style matching correct module names.
+module-naming-style = "snake_case"
+
+# Regular expression matching correct module names. Overrides module-naming-
+# style. If left empty, module names will be checked with the set naming style.
+module-rgx = "^(_?[a-z][a-z0-9_]*|__init__)$"
+
+# Regular expression which should only match function or class names that do not
+# require a docstring.
+no-docstring-rgx = "(__.*__|main|test.*|.*test|.*Test)$"
+
+# List of decorators that produce properties, such as abc.abstractproperty. Add
+# to this list to register other decorators that produce valid properties. These
+# decorators are taken in consideration only for invalid-name.
+property-classes = ["abc.abstractproperty", "cached_property.cached_property", "cached_property.threaded_cached_property", "cached_property.cached_property_with_ttl", "cached_property.threaded_cached_property_with_ttl"]
+
+# Naming style matching correct variable names.
+variable-naming-style = "snake_case"
+
+# Regular expression matching correct variable names. Overrides variable-naming-
+# style. If left empty, variable names will be checked with the set naming style.
+variable-rgx = "^[a-z][a-z0-9_]*$"
+
+[tool.pylint.classes]
+# List of method names used to declare (i.e. assign) instance attributes.
+defining-attr-methods = ["__init__", "__new__", "setUp"]
+
+# List of member names, which should be excluded from the protected access
+# warning.
+exclude-protected = ["_asdict", "_fields", "_replace", "_source", "_make"]
+
+# List of valid names for the first argument in a class method.
+valid-classmethod-first-arg = ["cls", "class_"]
+
+# List of valid names for the first argument in a metaclass class method.
+valid-metaclass-classmethod-first-arg = ["mcs"]
+
+[tool.pylint.design]
+# Maximum number of arguments for function / method.
+max-args = 10
+
+# Maximum number of attributes for a class (see R0902).
+max-attributes = 10
+
+# Maximum number of boolean expressions in an if statement (see R0916).
+max-bool-expr = 5
+
+# Maximum number of branch for function / method body.
+max-branches = 12
+
+# Maximum number of locals for function / method body.
+max-locals = 15
+
+# Maximum number of parents for a class (see R0901).
+max-parents = 7
+
+# Maximum number of public methods for a class (see R0904).
+max-public-methods = 20
+
+# Maximum number of return / yield for function / method body.
+max-returns = 6
+
+# Maximum number of statements in function / method body.
+max-statements = 50
+
+# Minimum number of public methods for a class (see R0903).
+min-public-methods = 2
+
+[tool.pylint.exceptions]
+# Exceptions that will emit a warning when caught.
+overgeneral-exceptions = ["builtins.BaseException", "builtins.Exception"]
+
+[tool.pylint.format]
+# Regexp for a line that is allowed to be longer than the limit.
+ignore-long-lines = "(?x)(\n^\\s*(\\#\\ )?<?https?://\\S+>?$|\n^\\s*(from\\s+\\S+\\s+)?import\\s+.+$)"
+
+# Number of spaces of indent required inside a hanging or continued line.
+indent-after-paren = 8
+
+# String used as indentation unit. This is usually "    " (4 spaces) or "\t" (1
+# tab).
+indent-string = "    "
+
+# Maximum number of characters on a single line.
+max-line-length = 120
+
+# Maximum number of lines in a module.
+max-module-lines = 99999
+
+# Allow the body of an if to be on the same line as the test if there is no else.
+single-line-if-stmt = true
+
+[tool.pylint.imports]
+# Deprecated modules which should not be used, separated by a comma.
+deprecated-modules = ["regsub", "TERMIOS", "Bastion", "rexec", "sets"]
+
+# Force import order to recognize a module as part of a third party library.
+known-third-party = ["enchant", "absl"]
+
+[tool.pylint.logging]
+# The type of string formatting that logging methods do. `old` means using %
+# formatting, `new` is for `{}` formatting.
+logging-format-style = "new"
+
+# Logging modules to check that the string format arguments are in logging
+# function parameter format.
+logging-modules = ["logging", "absl.logging", "tensorflow.io.logging"]
+
+[tool.pylint.messages_control]
+# Only show warnings with the listed confidence levels. Leave empty to show all.
+# Valid levels: HIGH, CONTROL_FLOW, INFERENCE, INFERENCE_FAILURE, UNDEFINED.
+confidence = ["HIGH", "CONTROL_FLOW", "INFERENCE", "INFERENCE_FAILURE", "UNDEFINED"]
+
+# Disable the message, report, category or checker with the given id(s). You can
+# either give multiple identifiers separated by comma (,) or put this option
+# multiple times (only on the command line, not in the configuration file where
+# it should appear only once). You can also use "--disable=all" to disable
+# everything first and then re-enable specific checks. For example, if you want
+# to run only the similarities checker, you can use "--disable=all
+# --enable=similarities". If you want to run only the classes checker, but have
+# no Warning level messages displayed, use "--disable=all --enable=classes
+# --disable=W".
+disable= [
+    "R",
+    "abstract-method",
+    "apply-builtin",
+    "arguments-differ",
+    "attribute-defined-outside-init",
+    "backtick",
+    "bad-option-value",
+    "basestring-builtin",
+    "buffer-builtin",
+    "c-extension-no-member",
+    "consider-using-enumerate",
+    "cmp-builtin",
+    "cmp-method",
+    "coerce-builtin",
+    "coerce-method",
+    "delslice-method",
+    "div-method",
+    "eq-without-hash",
+    "execfile-builtin",
+    "file-builtin",
+    "filter-builtin-not-iterating",
+    "fixme",
+    "getslice-method",
+    "global-statement",
+    "hex-method",
+    "idiv-method",
+    "implicit-str-concat",
+    "import-error",
+    "import-self",
+    "import-star-module-level",
+    "input-builtin",
+    "intern-builtin",
+    "invalid-str-codec",
+    "locally-disabled",
+    "long-builtin",
+    "long-suffix",
+    "map-builtin-not-iterating",
+    "misplaced-comparison-constant",
+    "missing-function-docstring",
+    "metaclass-assignment",
+    "next-method-called",
+    "next-method-defined",
+    "no-absolute-import",
+    "no-init",
+    "no-member",
+    "no-name-in-module",
+    "no-self-use",
+    "nonzero-method",
+    "oct-method",
+    "old-division",
+    "old-ne-operator",
+    "old-octal-literal",
+    "old-raise-syntax",
+    "parameter-unpacking",
+    "print-statement",
+    "raising-string",
+    "range-builtin-not-iterating",
+    "raw_input-builtin",
+    "rdiv-method",
+    "reduce-builtin",
+    "relative-import",
+    "reload-builtin",
+    "round-builtin",
+    "setslice-method",
+    "signature-differs",
+    "standarderror-builtin",
+    "suppressed-message",
+    "sys-max-int",
+    "trailing-newlines",
+    "unichr-builtin",
+    "unicode-builtin",
+    "unnecessary-pass",
+    "unpacking-in-except",
+    "useless-else-on-loop",
+    "useless-suppression",
+    "using-cmp-argument",
+    "wrong-import-order",
+    "xrange-builtin",
+    "zip-builtin-not-iterating",
+]
+
+[tool.pylint.method_args]
+# List of qualified names (i.e., library.method) which require a timeout
+# parameter e.g. 'requests.api.get,requests.api.post'
+timeout-methods = ["requests.api.delete", "requests.api.get", "requests.api.head", "requests.api.options", "requests.api.patch", "requests.api.post", "requests.api.put", "requests.api.request"]
+
+[tool.pylint.miscellaneous]
+# List of note tags to take in consideration, separated by a comma.
+notes = ["TODO", "FIXME"]
+
+[tool.pylint.refactoring]
+# Maximum number of nested blocks for function / method body
+max-nested-blocks = 5
+
+# Complete name of functions that never returns. When checking for inconsistent-
+# return-statements if a never returning function is called then it will be
+# considered as an explicit return statement and no message will be printed.
+never-returning-functions = ["sys.exit", "argparse.parse_error"]
+
+[tool.pylint.reports]
+# Python expression which should return a score less than or equal to 10. You
+# have access to the variables 'fatal', 'error', 'warning', 'refactor',
+# 'convention', and 'info' which contain the number of messages in each category,
+# as well as 'statement' which is the total number of statements analyzed. This
+# score is used by the global evaluation report (RP0004).
+evaluation = "10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)"
+
+# Set the output format. Available formats are: text, parseable, colorized, json2
+# (improved json format), json (old json format) and msvs (visual studio). You
+# can also give a reporter class, e.g. mypackage.mymodule.MyReporterClass.
+output-format = "text"
+
+# Tells whether to display a full report.
+reports = true
+
+# Activate the evaluation score.
+score = true
+
+[tool.pylint.similarities]
+# Comments are removed from the similarity computation
+ignore-comments = true
+
+# Docstrings are removed from the similarity computation
+ignore-docstrings = true
+
+# Imports are removed from the similarity computation
+ignore-imports = false
+
+# Signatures are removed from the similarity computation
+ignore-signatures = true
+
+# Minimum lines number of a similarity.
+min-similarity-lines = 4
+
+[tool.pylint.spelling]
+# Limits count of emitted suggestions for spelling mistakes.
+max-spelling-suggestions = 4
+
+# Spelling dictionary name. No available dictionaries : You need to install both
+# the python package and the system dependency for enchant to work.
+# spelling-dict =
+
+# List of comma separated words that should be considered directives if they
+# appear at the beginning of a comment and should not be checked.
+spelling-ignore-comment-directives = "fmt: on,fmt: off,noqa:,noqa,nosec,isort:skip,mypy:"
+
+[tool.pylint.string]
+# This flag controls whether inconsistent-quotes generates a warning when the
+# character used as a quote delimiter is used inconsistently within a module.
+check-quote-consistency = true
+
+[tool.pylint.typecheck]
+# List of decorators that produce context managers, such as
+# contextlib.contextmanager. Add to this list to register other decorators that
+# produce valid context managers.
+contextmanager-decorators = ["contextlib.contextmanager", "contextlib2.contextmanager"]
+
+# Tells whether missing members accessed in mixin class should be ignored. A
+# class is considered mixin if its name matches the mixin-class-rgx option.
+# Tells whether to warn about missing members when the owner of the attribute is
+# inferred to be None.
+ignore-none = true
+
+# This flag controls whether pylint should warn about no-member and similar
+# checks whenever an opaque object is returned when inferring. The inference can
+# return multiple potential results while evaluating a Python object, but some
+# branches might not be evaluated, which results in partial inference. In that
+# case, it might be useful to still emit no-member and other checks for the rest
+# of the inferred objects.
+ignore-on-opaque-inference = true
+
+# List of symbolic message names to ignore for Mixin members.
+ignored-checks-for-mixins = ["no-member", "not-async-context-manager", "not-context-manager", "attribute-defined-outside-init"]
+
+# List of class names for which member attributes should not be checked (useful
+# for classes with dynamically set attributes). This supports the use of
+# qualified names.
+ignored-classes = ["optparse.Values", "thread._local", "_thread._local"]
+
+# Show a hint with possible names when a member name was not found. The aspect of
+# finding the hint is based on edit distance.
+missing-member-hint = true
+
+# The minimum edit distance a name should have in order to be considered a
+# similar match for a missing member name.
+missing-member-hint-distance = 1
+
+# The total number of similar names that should be taken in consideration when
+# showing a hint for a missing member.
+missing-member-max-choices = 1
+
+# Regex pattern to define which classes are considered mixins.
+mixin-class-rgx = ".*[Mm]ixin"
+
+[tool.pylint.variables]
+# Tells whether unused global variables should be treated as a violation.
+allow-global-unused-variables = true
+
+# List of strings which can identify a callback function by name. A callback name
+# must start or end with one of those strings.
+callbacks = ["cb_", "_cb"]
+
+# A regular expression matching the name of dummy variables (i.e. expected to not
+# be used).
+dummy-variables-rgx = "^\\*{0,2}(_$|unused_|dummy_)"
+
+# Argument names that match this expression will be ignored.
+ignored-argument-names = "_.*|^ignored_|^unused_"
+
+# Tells whether we should check for unused import in __init__ files.
+init-import = false
+
+# List of qualified module names which can have objects that can redefine
+# builtins.
+redefining-builtins-modules = ["six", "six.moves", "past.builtins", "future.builtins", "functools"]

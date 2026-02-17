@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "template-kfp-pipeline"
+version = "0.1.0"
+description = ""
+authors = ["CAI-ENG"]
+packages = [
+    { include = "*.py" }
+]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13.0"
+kfp = "^2.7.0"
+kfp-kubernetes = "^1.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
