@@ -1,10 +1,10 @@
 ---
-site_name: {{cookiecutter.repository}}  # yamllint disable-line
+site_name: cai-boat  # yamllint disable-line
 site_description: ...
 repo_url: >
-  https://github.com/{{cookiecutter.org}}/{{cookiecutter.repository}}
+  https://github.com/AZ-AI/cai-boat
 repo_name: >
-  '{{cookiecutter.org}}/{{cookiecutter.repository}}'  # yamllint disable-line
+  'AZ-AI/cai-boat'  # yamllint disable-line
 
 nav:
   - Overview: README.md

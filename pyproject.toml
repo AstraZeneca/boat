@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "{{cookiecutter.repository}}"
+name = "cai-boat"
 version = "0.0.0"
 description = ""
-authors = ["{{cookiecutter.author}}"]
+authors = ["kfwk366_azu"]
 
 [tool.poetry.dependencies]
 # This version must also be changed in the ruff config.

@@ -1,7 +1,6 @@
-![](https://img.shields.io/badge/template-not%20ready-red)
 ![Python version](https://img.shields.io/badge/python-3.8-blue.svg)
 
-# {{cookiecutter.repository}}
+# cai-boat
 
 --------
 ## Important
@@ -34,7 +33,7 @@ We are actively developing and maintaining Github Actions specifically for inter
 
 1. [Publish Package](https://github.com/azu-biopharmaceuticals-rd/data-science-template/blob/main/.github/publish-package/action.yaml) - change/set in the inputs the JFrog Artifactory user and repository your project will use.
 2. [Pytest Feature](https://github.com/azu-biopharmaceuticals-rd/data-science-template/blob/main/.github/pytest-feature/action.yaml) - change/set in the inputs the JFrog Artifactory user for your project.
-3. [Build Component](https://github.com/azu-biopharmaceuticals-rd/data-science-template/blob/main/.github/workflows/build-component.yaml) - change/set in the inputs the Harbor project where your docker images will be stored. This workflow can be triggered manually from the [GitHub Actions](https://github.com/azu-biopharmaceuticals-rd/{{cookiecutter.repository}}/actions/workflows/build-component.yaml) tab.
+3. [Build Component](https://github.com/azu-biopharmaceuticals-rd/data-science-template/blob/main/.github/workflows/build-component.yaml) - change/set in the inputs the Harbor project where your docker images will be stored. This workflow can be triggered manually from the [GitHub Actions](https://github.com/azu-biopharmaceuticals-rd/cai-boat/actions/workflows/build-component.yaml) tab.
 
   > Make sure the CI secrets match your project's secrets!
 
@@ -46,7 +45,7 @@ We are actively developing and maintaining Github Actions specifically for inter
     - Use Semantic Versioning for your project. This runs on push to main and relies on conventional commits, there is a check for this in the pre-commit hooks.
     - After the version has been updated and released in GitHub, the package can be published to Artifactory. Uncomment this step if you want the package to be released.
 3. Package Manual Release
-    - For pre-release publishing of your package, trigger this workflow manually from the [GitHub Actions](https://github.com/azu-biopharmaceuticals-rd/{{cookiecutter.repository}}/actions/workflows/manual-pre-release.yaml) tab.
+    - For pre-release publishing of your package, trigger this workflow manually from the [GitHub Actions](https://github.com/azu-biopharmaceuticals-rd/cai-boat/actions/workflows/manual-pre-release.yaml) tab.
 4. Docker images build and publish
     - Use `build-images.yaml` to build each individual component you need. Check the inputs, and change the secrets to match the secrets your repo has access to.
 5. Build Documentation
@@ -70,7 +69,7 @@ We are actively developing and maintaining Github Actions specifically for inter
     confidential information.
     │  
     ├── Dockerfile         <- A generic Dockerfile to help you get started.
-    ├── {{cookiecutter.package_name}}                <- Source code for use in this project.
+    ├── cai_boat                <- Source code for use in this project.
     │
 
 --------
