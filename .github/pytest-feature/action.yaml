@@ -15,10 +15,10 @@ inputs:
     default: "cai-eng"
     type: string
   artifactory-token:
-    default: "null"
+    required: true
     type: string
   wandb-token:
-    default: "null"
+    required: true
     type: string
 
 

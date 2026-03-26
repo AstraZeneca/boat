@@ -1,21 +1,43 @@
 [tool.poetry]
-name = "cai-boat"
-version = "0.0.0"
+name = "boat"
+version = "0.1.1"
 description = ""
-authors = ["kfwk366_azu"]
+authors = ["alpiges"]
 
 [tool.poetry.dependencies]
 # This version must also be changed in the ruff config.
 python = ">=3.10,<3.12"
+logomaker = "^0.8.7"
+plotly = "^6.3.1"
+promb = "^1.0.2"
+pyyaml = "^6.0.2"
+torchvision = ">=0.20.1"
+torch = "^2.0.0, <2.6.0"
+tqdm = "^4.67.1"
+typer = "^0.12.5"
+wandb = "0.18.7"
+sympy = "^1.13.1"
+
+ablang2 = {version = "^0.2.1", optional = true}
+blosum = {version = "^2.0.3", optional = true}
+botorch = {version = "^0.9.5", optional = true}
+gpytorch = {version = "^1.11", optional = true}
+scikit-learn = {version = "^1.0.0", optional = true}
+fair-esm = {version = "^2.0.0", optional=true}
+
+[tool.poetry.extras]
+boat = ["ablang2", "blosum", "botorch", "gpytorch", "scikit-learn", "fair-esm"]
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "*"
-ruff = "^0.0.259"
+ruff = "^0.11.8"
 black = "^23.1.0"
-gitlint = "^0.19.1"
+# gitlint = "^0.19.1"
 mypy = "^1.1.1"
+ipdb = "^0.13.13"
 
 [tool.poetry.group.test.dependencies]
+numpy = { version = "^1.26.4" }
 pytest = "*"
 pytest-cov = "*"
 pytest-reportlog = "*"
@@ -29,11 +51,6 @@ mkdocs-section-index = { version = "^0.3.4" }
 pymdown-extensions = "^10.0.1"
 mkdocstrings-python = "^1.10.7"
 pytkdocs = {extras = ["numpy-style"], version = "^0.16.1"}
-
-[[tool.poetry.source]]
-name = "artifactory"
-url = "https://artifactory.astrazeneca.com/artifactory/api/pypi/pypi-virtual/simple"
-priority = "explicit"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -63,7 +80,6 @@ testpaths = [
 branch = true
 relative_files = true
 omit = [
-    'workflows/*',
     'docs/*',
 ]
 
@@ -77,7 +93,7 @@ line-length = 120
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
-select = ["D","E", "F","W","I001"]
+select = ["D", "E", "F", "W", "I001"]
 
 ignore = []
 

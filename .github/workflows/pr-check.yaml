@@ -1,10 +1,10 @@
 name: PR Checks and Version Tracking
 
 on:
-  # push:
-  #   branches:
-  #     - main
-  #     - dev
+  push:
+    branches:
+      - main
+      - dev
   pull_request:
 
 permissions:
@@ -50,26 +50,131 @@ jobs:
         run: |
           poetry run pre-commit run --all-files
 
-  test:
-    needs: set-version
-    if: (! contains(github.event.repository.name, 'data-science-template')) && (! contains(github.event.head_commit.message, 'Initial commit'))
-    runs-on: azu-biopharmaceuticals-rd-self-hosted-linux
+  test-ga:
+    needs: [set-version]
+    runs-on: azimuth
     steps:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Pytest your_feature
+      - name: Pytest genetic algorithm
         uses: ./.github/pytest-feature
         with:
-          extras: ""
+          extras: "bayesopt"
           python-version: ${{needs.set-version.outputs.python-version}}
-          path: "tests"  # add the path to your independent feature test here
-          # artifactory-token: ${{ secrets.CAI_ARTIFACTORY_TOKEN }}  # make sure your repo has access to this secret
-          # wandb-token: ${{ secrets.CAI_WANDB }}  # make sure your repo has access to this secret
+          path: "tests/genetic_algorithm tests/test_data_utils.py"
+          artifactory-token: ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
+          wandb-token: ""
+
+  test-bayesopt:
+    needs: [set-version]
+    runs-on: azimuth
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Pytest bayesopt
+        uses: ./.github/pytest-feature
+        with:
+          extras: "bayesopt"
+          python-version: ${{needs.set-version.outputs.python-version}}
+          path: "tests/bayesopt"
+          artifactory-token: ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
+          wandb-token: ""
+
+  test-bio:
+    needs: [set-version]
+    runs-on: azimuth
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Pytest biologics
+        uses: ./.github/pytest-feature
+        with:
+          python-version: ${{needs.set-version.outputs.python-version}}
+          path: "tests/biologics"
+          artifactory-token: ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
+          wandb-token: ""
+
+  test-scoring-functions:
+    needs: set-version
+    runs-on: azimuth
+    steps:
+      - name: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{needs.set-version.outputs.python-version}}
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Artifactory and git credentials
+        shell: bash
+        run: |
+          poetry config http-basic.mlab cai-eng@astrazeneca.com ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
+          poetry config http-basic.artifactory cai-eng@astrazeneca.com ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
+
+      - name: Install poetry dev deps
+        shell: bash
+        run: |
+          poetry install --extras "bayesopt" --with test
+
+      - name: Pytest
+        shell: bash
+        run: |
+          poetry run pytest tests/scoring_function
+          poetry run coverage report
+
+      - name: Upload Coverage Data
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ github.job }}
+          path: coverage.xml
+
+  test-bayesian-optimization:
+    needs: set-version
+    runs-on: azimuth
+    steps:
+      - name: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{needs.set-version.outputs.python-version}}
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Artifactory and git credentials
+        shell: bash
+        run: |
+          poetry config http-basic.mlab cai-eng@astrazeneca.com ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
+          poetry config http-basic.artifactory cai-eng@astrazeneca.com ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
+
+      - name: Install poetry dev deps
+        shell: bash
+        run: |
+          poetry install --extras "bayesopt" --with test
+
+      - name: Component Tests Bayesian Optimization
+        shell: bash
+        run: |
+          poetry run pytest workflows/components/bayesian_optimization/tests/ --cov=bayesian_optimization --cov-report=xml:coverage.xml
+
+      - name: Upload Coverage Data of Component
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ github.job }}
+          path: coverage.xml
 
   sonarqube:
     name: SonarQube
-    needs: test
+    needs: [test-ga, test-scoring-functions, test-bayesopt, test-bio, test-bayesian-optimization]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -82,16 +187,21 @@ jobs:
         with:
           pattern: coverage-*
 
-      # Run SonarQube analysis only if the necessary secrets are set
+      - name: Replace '_work' with 'work' in Coverage Paths (SonarQube)
+        run: |
+          find ${{ github.workspace }} -type f -name 'coverage.xml' | while read coverage_file; do
+            echo "Processing $coverage_file"
+            sed -i 's|/home/runner/_work|/home/runner/work|g' "$coverage_file"
+          done
+
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        if: env.SONAR_HOST_URL != '' && env.SONAR_TOKEN != ''
 
   set-package-version:
-    needs: [lint,set-version,test]
+    needs: [lint, set-version, test-ga, test-scoring-functions, test-bayesopt, test-bio, test-bayesian-optimization]
     if: (! contains(github.event.repository.name, 'data-science-template')) && (github.event_name == 'pull_request') && (github.head_ref != 'main') && (github.head_ref != 'dev')
     runs-on: "azu-biopharmaceuticals-rd-self-hosted-linux"
     steps:
@@ -99,36 +209,29 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-          fetch-depth: 0
-
       - name: setup-python
         uses: actions/setup-python@v5
         with:
           python-version: ${{needs.set-version.outputs.python-version}}
-
       - name: Increment Version
         id: increment_version
         uses: azu-ignite/az-action-semver@0.3.0
         with:
           unconventional_commit_strategy: "patch"
           apply_tag: "false"
-
       - name: Install poetry
         run: pip install poetry
-
       - name: Update package version
         shell: bash
         run: |
           poetry version ${{ steps.increment_version.outputs.version }};
-
       - name: Push changes to repo
         shell: bash
         run: |
-          echo ${{ github.head_ref }}
           if [[ `git status --porcelain` ]]; then
             git add pyproject.toml;
             git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "docs: package version auto update";
             git push --force;
           else
-            echo "Nothing to update. We are already using the latest version.";
+            echo "Nothing to update.";
           fi

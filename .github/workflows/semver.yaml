@@ -22,95 +22,95 @@ jobs:
         with:
           version: "3.10"
 
-  verify_version:
-    needs: set-version
-    if: (! contains(github.event.repository.name, 'data-science-template')) && (! contains(github.event.head_commit.message, 'Initial commit'))
-    runs-on: "azu-biopharmaceuticals-rd-self-hosted-linux"
-    outputs:
-      version: ${{ steps.increment_version.outputs.version }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    verify_version:
+      needs: set-version
+      if: (! contains(github.event.repository.name, 'data-science-template')) && (! contains(github.event.head_commit.message, 'Initial commit'))
+      runs-on: "azu-biopharmaceuticals-rd-self-hosted-linux"
+      outputs:
+        version: ${{ steps.increment_version.outputs.version }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
 
-      - name: setup-python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{needs.set-version.outputs.python-version}}
+        - name: setup-python
+          uses: actions/setup-python@v5
+          with:
+            python-version: ${{needs.set-version.outputs.python-version}}
 
-      - name: Find New Version
-        id: increment_version
-        uses: azu-ignite/az-action-semver@0.3.0
-        with:
-          unconventional_commit_strategy: "patch"
-          apply_tag: "false"
+        - name: Find New Version
+          id: increment_version
+          uses: azu-ignite/az-action-semver@0.3.0
+          with:
+            unconventional_commit_strategy: "patch"
+            apply_tag: "false"
 
-      - name: Validate package version
-        shell: bash
-        run: |
-          pip install poetry
-          echo "poetry version is $(poetry version -s) and GitHub tag version will be ${{ steps.increment_version.outputs.version }}"
-          if [[ $(poetry version -s) != ${{ steps.increment_version.outputs.version }} ]]; then
-            echo "version mismatch. Fix the versioning and push again."
-            exit -1
-          fi
+        - name: Validate package version
+          shell: bash
+          run: |
+            pip install poetry
+            echo "poetry version is $(poetry version -s) and GitHub tag version will be ${{ steps.increment_version.outputs.version }}"
+            if [[ $(poetry version -s) != ${{ steps.increment_version.outputs.version }} ]]; then
+              echo "version mismatch. Fix the versioning and push again."
+              exit -1
+            fi
 
-  release:
-    needs: [set-version, verify_version]
-    if: (! contains(github.event.repository.name, 'data-science-template')) && (! contains(github.event.head_commit.message, 'Initial commit'))
-    runs-on: "azu-biopharmaceuticals-rd-self-hosted-linux"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    release:
+      needs: [set-version, verify_version]
+      if: (! contains(github.event.repository.name, 'data-science-template')) && (! contains(github.event.head_commit.message, 'Initial commit'))
+      runs-on: "azu-biopharmaceuticals-rd-self-hosted-linux"
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
 
-      - name: setup-python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{needs.set-version.outputs.python-version}}
+        - name: setup-python
+          uses: actions/setup-python@v5
+          with:
+            python-version: ${{needs.set-version.outputs.python-version}}
 
-      - name: Apply new tag
-        env:
-          TAG: ${{ needs.verify_version.outputs.version }}
-        uses: actions/github-script@v7.0.1
-        with:
-          script: |
-            const {TAG} = process.env;
-            const tag = `refs/tags/${TAG}`;
-            await github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: tag,
-              sha: context.sha
-            });
+        - name: Apply new tag
+          env:
+            TAG: ${{ needs.verify_version.outputs.version }}
+          uses: actions/github-script@v7.0.1
+          with:
+            script: |
+              const {TAG} = process.env;
+              const tag = `refs/tags/${TAG}`;
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: tag,
+                sha: context.sha
+              });
 
-      - name: Create Release
-        env:
-          TAG: ${{ needs.verify_version.outputs.version }}
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const {TAG} = process.env;
-            await github.rest.repos.createRelease({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  generate_release_notes: true,
-                  tag_name: TAG
-                });
+        - name: Create Release
+          env:
+            TAG: ${{ needs.verify_version.outputs.version }}
+          uses: actions/github-script@v6
+          with:
+            script: |
+              const {TAG} = process.env;
+              await github.rest.repos.createRelease({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    generate_release_notes: true,
+                    tag_name: TAG
+                  });
 
-  # change here to the repository where you wish to publish your package (pypi-virtual by default).
-  # Also change the secret keys to match your repo's secrets.
-  # publish:
-  #   needs: [set-version, verify_version, release]
-  #   runs-on: azu-biopharmaceuticals-rd-self-hosted-linux
-  #   name: Deploy package to JFrog
-  #   steps:
-  #  - name: checkout
-  #    uses: actions/checkout@v4
-  #  - name: Deploy package to JFrog
-  #    uses: ./.github/publish-package
-  #    with:
-  #      python-version: ${{needs.set-version.outputs.python-version}}
-  #      token: ${{ secrets.CAI_ARTIFACTORY_TOKEN }}
+    # change here to the repository where you wish to publish your package (pypi-virtual by default).
+    # Also change the secret keys to match your repo's secrets.
+    # publish:
+    #   needs: [set-version, verify_version, release]
+    #   runs-on: azu-biopharmaceuticals-rd-self-hosted-linux
+    #   name: Deploy package to JFrog
+    #   steps:
+    #  - name: checkout
+    #    uses: actions/checkout@v4
+    #  - name: Deploy package to JFrog
+    #    uses: ./.github/publish-package
+    #    with:
+    #      python-version: ${{needs.set-version.outputs.python-version}}
+    #      token: ${{ secrets.CAI_ARTIFACTORY_TOKEN }}
