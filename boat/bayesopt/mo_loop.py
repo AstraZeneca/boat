@@ -68,7 +68,7 @@ class MOBayesOptOnSequences:
             n_qmc_samples: number of samples to estimate the batch acquisition function
             max_training_points: maximum number of training points to use for the surrogate models
             validate_surrogates: whether to validate surrogates during training, defaults to True
-            validation_interval: validate surrogates every N iterations (e.g., 2 = validate every 2nd iteration), defaults to 1
+            validation_interval: validate surrogates every N iterations, defaults to 1
             dd_dict: dictionary with device and dtype information, defaults to using CUDA if available
             **kwargs: additional keyword arguments for the encoding
         """
