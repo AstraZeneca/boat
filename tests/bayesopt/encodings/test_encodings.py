@@ -110,6 +110,7 @@ def test_blosum_encoding(sample_abvseq):
 
 def test_ablang2_encoding(sample_abvseq):
     """Test the Ablang2Encoding class to ensure it encodes sequences correctly."""
+    pytest.importorskip("ablang2")
     device = torch.device("cpu")
     dd_dict = {"device": device, "dtype": torch.float64}
     ablang_enc = Ablang2Encoding(dd_dict=dd_dict)
@@ -130,5 +131,6 @@ def test_get_encoding():
     assert isinstance(bag, BagOfAAsEncoding)
     blo = get_encoding("blosum")(dd_dict=dd_dict, vocab={0: "ABC", 1: "ABC", 2: "ABC"}, n_blosum=45)
     assert isinstance(blo, BlosumEncoding)
+    pytest.importorskip("ablang2")
     ablang = get_encoding("ablang2")(dd_dict=dd_dict)
     assert isinstance(ablang, Ablang2Encoding)

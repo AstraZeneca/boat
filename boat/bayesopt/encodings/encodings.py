@@ -3,7 +3,6 @@
 import abc
 from typing import Dict, List, Optional, Type
 
-import ablang2
 import blosum
 import numpy as np
 import torch
@@ -268,6 +267,13 @@ class Ablang2Encoding(Encoding):
         """
         super().__init__(dd_dict)
         self.linker = linker
+        try:
+            import ablang2
+        except ImportError as exc:
+            raise ImportError(
+                "Ablang2Encoding requires the optional dependency 'ablang2'. "
+                "Install extras with `poetry install --extras plms` or install `ablang2` directly."
+            ) from exc
         self.ablang2 = ablang2.pretrained(device=self.device)  # load ablang-2 model
 
     def __str__(self):
