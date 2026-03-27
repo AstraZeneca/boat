@@ -42,6 +42,8 @@ class MOBayesOptOnSequences:
         batch_size: int = 1,
         n_qmc_samples: int = 1024,
         max_training_points: int = 700,
+        validate_surrogates: bool = True,
+        validation_interval: int = 1,
         dd_dict: dict
         | None = {
             "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
@@ -65,6 +67,8 @@ class MOBayesOptOnSequences:
             batch_size: number of samples drawn in every iteration (requires a 'q' acquitision function)
             n_qmc_samples: number of samples to estimate the batch acquisition function
             max_training_points: maximum number of training points to use for the surrogate models
+            validate_surrogates: whether to validate surrogates during training, defaults to True
+            validation_interval: validate surrogates every N iterations (e.g., 2 = validate every 2nd iteration), defaults to 1
             dd_dict: dictionary with device and dtype information, defaults to using CUDA if available
             **kwargs: additional keyword arguments for the encoding
         """
@@ -98,7 +102,11 @@ class MOBayesOptOnSequences:
 
         self.ga_params = ga_params
 
+        self.validate_surrogates = validate_surrogates
+        self.validation_interval = validation_interval
+
         self.batch_size = batch_size
+
         self.n_qmc_samples = n_qmc_samples
 
         if self.batch_size > 1 and not acquisition_str.lower().startswith("q"):
@@ -332,6 +340,13 @@ class MOBayesOptOnSequences:
             train_x = train_x[selected_indices]
             train_y = train_y[selected_indices]
 
+        # Determine if validation should run this iteration
+        should_validate = (
+            self.validate_surrogates
+            and self.validation_interval > 0
+            and (self.iteration % self.validation_interval == 0)
+        )
+
         # Train a separate model for each objective
         for obj_idx, obj_name in enumerate(self.objective_function.objective_names):
             is_binary = self.objective_function.objective_types[obj_name] == "binary"
@@ -348,10 +363,11 @@ class MOBayesOptOnSequences:
             # Extract the scores for this objective
             obj_y = train_y[:, obj_idx : obj_idx + 1]
 
-            # Validate surrogates
-            self._validate_surrogates(
-                train_x, obj_y, is_binary, model_str, self.objective_function.objective_names[obj_idx]
-            )
+            # Validate surrogates only if enabled and at appropriate interval
+            if should_validate:
+                self._validate_surrogates(
+                    train_x, obj_y, is_binary, model_str, self.objective_function.objective_names[obj_idx]
+                )
 
             # Initialize and train model for this objective
             model = initialize_model(get_model(model_str), train_x, obj_y, binary=is_binary)

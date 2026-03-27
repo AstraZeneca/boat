@@ -74,6 +74,7 @@ def test_so_bayesopt_loop_integration(acquisition_str, batch_size, so_scoring_fu
         vocab=vocab,
         ga_params=ga_params,
         dd_dict={"device": torch.device("cuda" if torch.cuda.is_available() else "cpu"), "dtype": torch.float64},
+        validate_surrogates=False,  # Skip expensive validation in tests
         **batch_params,
     )
 
