@@ -7,7 +7,7 @@ description = "AbLang2: An antibody-specific language model focusing on NGL pred
 optional = true
 python-versions = "*"
 groups = ["main"]
-markers = "extra == \"boat\""
+markers = "extra == \"plms\""
 files = [
     {file = "ablang2-0.2.1-py3-none-any.whl", hash = "sha256:eda9b550bd8d9bdf1caaac821c3951deff5ef7141d4644292c6ba09126bbd834"},
     {file = "ablang2-0.2.1.tar.gz", hash = "sha256:7f01bec5c5a5d5c270fa078cdd923d3a98bdc2b93538b17d46231db2d783676d"},
@@ -102,10 +102,9 @@ uvloop = ["uvloop (>=0.15.2)"]
 name = "blosum"
 version = "2.2.0"
 description = "A simple BLOSUM toolbox without dependencies."
-optional = true
+optional = false
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "blosum-2.2.0-py3-none-any.whl", hash = "sha256:707b89fe268b8d1f81a7a3aca600f4eb6d01215f46ba233f4ea185a557e226bd"},
     {file = "blosum-2.2.0.tar.gz", hash = "sha256:6200425b534c3b82d2dca303bbc685274e6adf34f9a257671f85291b20766c35"},
@@ -118,10 +117,9 @@ dev = ["mypy (>=0.910)", "pytest (>=6.2)", "pytest-cov (>=2.12)", "tox (>=3.24)"
 name = "botorch"
 version = "0.9.5"
 description = "Bayesian Optimization in PyTorch"
-optional = true
+optional = false
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "botorch-0.9.5-py3-none-any.whl", hash = "sha256:bd86aa43b028bbb2959928790f0090351ce73fdefdab7502253a7e15db9c7a12"},
     {file = "botorch-0.9.5.tar.gz", hash = "sha256:9e07193eb7cede00da0b8a2455b0423893c732a8ec61efff18e73f9ec7cbbd33"},
@@ -625,7 +623,7 @@ description = "A new flavour of deep learning operations"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"boat\""
+markers = "extra == \"plms\""
 files = [
     {file = "einops-0.8.2-py3-none-any.whl", hash = "sha256:54058201ac7087911181bfec4af6091bb59380360f069276601256a76af08193"},
     {file = "einops-0.8.2.tar.gz", hash = "sha256:609da665570e5e265e27283aab09e7f279ade90c4f01bcfca111f3d3e13f2827"},
@@ -669,7 +667,7 @@ description = "Evolutionary Scale Modeling (esm): Pretrained language models for
 optional = true
 python-versions = "*"
 groups = ["main"]
-markers = "extra == \"boat\""
+markers = "extra == \"plms\""
 files = [
     {file = "fair-esm-2.0.0.tar.gz", hash = "sha256:4ed34d4598ec75ed6550a4e581d023bf8d4a8375317ecba6269bb68135f80c85"},
     {file = "fair_esm-2.0.0-py3-none-any.whl", hash = "sha256:7dcb58828a401155d1457d071a03800bd1a50331ddf24ac79ad1dd0f2ea682a2"},
@@ -864,10 +862,9 @@ test = ["coverage[toml]", "ddt (>=1.1.1,!=1.4.3)", "mock ; python_version < \"3.
 name = "gpytorch"
 version = "1.11"
 description = "An implementation of Gaussian Processes in Pytorch"
-optional = true
+optional = false
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "gpytorch-1.11-py3-none-any.whl", hash = "sha256:188bfdbcafcb8f754382e54dc19bd21a86220aaf3ec1587cb8cbb7808876c4ef"},
     {file = "gpytorch-1.11.tar.gz", hash = "sha256:72fbb72b8965e37e7bd53c5f17d08747a404d048e80ec9d9983dee51685d2760"},
@@ -1049,10 +1046,10 @@ pygments = "*"
 name = "jaxtyping"
 version = "0.3.7"
 description = "Type annotations and runtime checking for shape and dtype of JAX/NumPy/PyTorch/etc. arrays."
-optional = true
+optional = false
 python-versions = ">=3.10"
 groups = ["main"]
-markers = "python_version == \"3.10\" and extra == \"boat\""
+markers = "python_version == \"3.10\""
 files = [
     {file = "jaxtyping-0.3.7-py3-none-any.whl", hash = "sha256:303ab8599edf412eeb40bf06c863e3168fa186cf0e7334703fa741ddd7046e66"},
     {file = "jaxtyping-0.3.7.tar.gz", hash = "sha256:3bd7d9beb7d3cb01a89f93f90581c6f4fff3e5c5dc3c9307e8f8687a040d10c4"},
@@ -1070,10 +1067,10 @@ tests = ["beartype (>=0.21.0)", "cloudpickle (>=3.1.1)", "equinox (>=0.13.1)", "
 name = "jaxtyping"
 version = "0.3.9"
 description = "Type annotations and runtime checking for shape and dtype of JAX/NumPy/PyTorch/etc. arrays."
-optional = true
+optional = false
 python-versions = ">=3.11"
 groups = ["main"]
-markers = "python_version == \"3.11\" and extra == \"boat\""
+markers = "python_version == \"3.11\""
 files = [
     {file = "jaxtyping-0.3.9-py3-none-any.whl", hash = "sha256:a00557a9d616eff157491f06ed2e21ed94886fad3832399273eb912b345da378"},
     {file = "jaxtyping-0.3.9.tar.gz", hash = "sha256:f8c02d1b623d5f1b6665d4f3ddaec675d70004f16a792102c2fc51264190951d"},
@@ -1129,10 +1126,9 @@ i18n = ["Babel (>=2.7)"]
 name = "joblib"
 version = "1.5.3"
 description = "Lightweight pipelining with Python functions"
-optional = true
+optional = false
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "joblib-1.5.3-py3-none-any.whl", hash = "sha256:5fc3c5039fc5ca8c0276333a188bbd59d6b7ab37fe6632daa76bc7f9ec18e713"},
     {file = "joblib-1.5.3.tar.gz", hash = "sha256:8561a3269e6801106863fd0d6d84bb737be9e7631e33aaed3fb9ce5953688da3"},
@@ -1269,10 +1265,9 @@ files = [
 name = "linear-operator"
 version = "0.5.1"
 description = "A linear operator implementation, primarily designed for finite-dimensional positive definite operators (i.e. kernel matrices)."
-optional = true
+optional = false
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "linear_operator-0.5.1-py3-none-any.whl", hash = "sha256:3d40ea5c93a230c8800df80993e49ecc7ec44e63081f80dde2bb0e2a082cb5b1"},
     {file = "linear_operator-0.5.1.tar.gz", hash = "sha256:64d5fabd81bc77b3c84af966087bd2fae07b41a7c3823f28cfab49f3066fed1f"},
@@ -1707,10 +1702,9 @@ tests = ["pytest (>=4.6)"]
 name = "multipledispatch"
 version = "1.0.0"
 description = "Multiple dispatch"
-optional = true
+optional = false
 python-versions = "*"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "multipledispatch-1.0.0-py3-none-any.whl", hash = "sha256:0c53cd8b077546da4e48869f49b13164bebafd0c2a5afceb6bb6a316e7fb46e4"},
     {file = "multipledispatch-1.0.0.tar.gz", hash = "sha256:5c839915465c68206c3e9c473357908216c28383b425361e5d144594bf85a7e0"},
@@ -2091,10 +2085,9 @@ files = [
 name = "opt-einsum"
 version = "3.4.0"
 description = "Path optimization of einsum functions."
-optional = true
+optional = false
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "opt_einsum-3.4.0-py3-none-any.whl", hash = "sha256:69bb92469f86a1565195ece4ac0323943e83477171b91d24c35afe028a90d7cd"},
     {file = "opt_einsum-3.4.0.tar.gz", hash = "sha256:96ca72f1b886d148241348783498194c577fa30a8faac108586b14f1ba4473ac"},
@@ -2708,10 +2701,9 @@ diagrams = ["jinja2", "railroad-diagrams"]
 name = "pyro-api"
 version = "0.1.2"
 description = "Generic API for dispatch to Pyro backends."
-optional = true
+optional = false
 python-versions = "*"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "pyro-api-0.1.2.tar.gz", hash = "sha256:a1b900d9580aa1c2fab3b123ab7ff33413744da7c5f440bd4aadc4d40d14d920"},
     {file = "pyro_api-0.1.2-py3-none-any.whl", hash = "sha256:10e0e42e9e4401ce464dab79c870e50dfb4f413d326fa777f3582928ef9caf8f"},
@@ -2725,10 +2717,9 @@ test = ["flake8", "pytest (>=5.0)"]
 name = "pyro-ppl"
 version = "1.9.1"
 description = "A Python library for probabilistic modeling and inference"
-optional = true
+optional = false
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "pyro_ppl-1.9.1-py3-none-any.whl", hash = "sha256:91fb2c8740d9d3bd548180ac5ecfa04552ed8c471a1ab66870180663b8f09852"},
     {file = "pyro_ppl-1.9.1.tar.gz", hash = "sha256:5e1596de276c038a3f77d2580a90d0a97126e0104900444a088eee620bb0d65e"},
@@ -3123,7 +3114,7 @@ description = "Rotary Embedding - Pytorch"
 optional = true
 python-versions = "*"
 groups = ["main"]
-markers = "extra == \"boat\""
+markers = "extra == \"plms\""
 files = [
     {file = "rotary_embedding_torch-0.8.9-py3-none-any.whl", hash = "sha256:700e8de9dfbefba5f9117a66652a2520648dcc60136895f0068b6a85347cab02"},
     {file = "rotary_embedding_torch-0.8.9.tar.gz", hash = "sha256:b213f153cad1d108064d930544fb3af678d56515893d3f869a7a146f87997e3f"},
@@ -3165,10 +3156,10 @@ files = [
 name = "scikit-learn"
 version = "1.7.2"
 description = "A set of python modules for machine learning and data mining"
-optional = true
+optional = false
 python-versions = ">=3.10"
 groups = ["main"]
-markers = "python_version == \"3.10\" and extra == \"boat\""
+markers = "python_version == \"3.10\""
 files = [
     {file = "scikit_learn-1.7.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:6b33579c10a3081d076ab403df4a4190da4f4432d443521674637677dc91e61f"},
     {file = "scikit_learn-1.7.2-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:36749fb62b3d961b1ce4fedf08fa57a1986cd409eff2d783bca5d4b9b5fce51c"},
@@ -3222,10 +3213,10 @@ tests = ["matplotlib (>=3.5.0)", "mypy (>=1.15)", "numpydoc (>=1.2.0)", "pandas 
 name = "scikit-learn"
 version = "1.8.0"
 description = "A set of python modules for machine learning and data mining"
-optional = true
+optional = false
 python-versions = ">=3.11"
 groups = ["main"]
-markers = "python_version == \"3.11\" and extra == \"boat\""
+markers = "python_version == \"3.11\""
 files = [
     {file = "scikit_learn-1.8.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:146b4d36f800c013d267b29168813f7a03a43ecd2895d04861f1240b564421da"},
     {file = "scikit_learn-1.8.0-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:f984ca4b14914e6b4094c5d52a32ea16b49832c03bd17a110f004db3c223e8e1"},
@@ -3694,10 +3685,9 @@ dev = ["hypothesis (>=6.70.0)", "pytest (>=7.1.0)"]
 name = "threadpoolctl"
 version = "3.6.0"
 description = "threadpoolctl"
-optional = true
+optional = false
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "threadpoolctl-3.6.0-py3-none-any.whl", hash = "sha256:43a0b8fd5a2928500110039e43a5eed8480b918967083ea48dc3ab9f13c4a7fb"},
     {file = "threadpoolctl-3.6.0.tar.gz", hash = "sha256:8ab8b4aa3491d812b623328249fab5302a68d2d71745c8a4c719a2fcaba9f44e"},
@@ -3869,10 +3859,9 @@ tutorials = ["matplotlib", "pandas", "tabulate"]
 name = "typeguard"
 version = "2.13.3"
 description = "Run-time type checker for Python"
-optional = true
+optional = false
 python-versions = ">=3.5.3"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "typeguard-2.13.3-py3-none-any.whl", hash = "sha256:5e3e3be01e887e7eafae5af63d1f36c849aaa94e3a0112097312aabfa16284f1"},
     {file = "typeguard-2.13.3.tar.gz", hash = "sha256:00edaa8da3a133674796cf5ea87d9f4b4c367d77476e185e80251cc13dfbb8c4"},
@@ -3968,10 +3957,9 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 name = "wadler-lindig"
 version = "0.1.7"
 description = "A Wadler–Lindig pretty-printer for Python."
-optional = true
+optional = false
 python-versions = ">=3.10"
 groups = ["main"]
-markers = "extra == \"boat\""
 files = [
     {file = "wadler_lindig-0.1.7-py3-none-any.whl", hash = "sha256:e3ec83835570fd0a9509f969162aeb9c65618f998b1f42918cfc8d45122fe953"},
     {file = "wadler_lindig-0.1.7.tar.gz", hash = "sha256:81d14d3fe77d441acf3ebd7f4aefac20c74128bf460e84b512806dccf7b2cd55"},
@@ -4083,9 +4071,9 @@ files = [
 ]
 
 [extras]
-boat = ["ablang2", "blosum", "botorch", "fair-esm", "gpytorch", "scikit-learn"]
+plms = ["ablang2", "fair-esm"]
 
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.12"
-content-hash = "f16803f5a23b9e77469f4320fbc92b6e0157f0c18ed9e97dd0e627c06fce7916"
+content-hash = "71e33b1eefa97b522e6f0e771d6be66b827561cf1aca0ef72c645d1e7c1b0817"

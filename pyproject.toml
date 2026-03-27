@@ -7,10 +7,14 @@ authors = ["alpiges"]
 [tool.poetry.dependencies]
 # This version must also be changed in the ruff config.
 python = ">=3.10,<3.12"
+blosum = "^2.0.3"
+botorch = "^0.9.5"
+gpytorch = "^1.11"
 logomaker = "^0.8.7"
 plotly = "^6.3.1"
 promb = "^1.0.2"
 pyyaml = "^6.0.2"
+scikit-learn = "^1.0.0"
 torchvision = ">=0.20.1"
 torch = "^2.0.0, <2.6.0"
 tqdm = "^4.67.1"
@@ -18,15 +22,11 @@ typer = "^0.12.5"
 wandb = "0.18.7"
 sympy = "^1.13.1"
 
-ablang2 = {version = "^0.2.1", optional = true}
-blosum = {version = "^2.0.3", optional = true}
-botorch = {version = "^0.9.5", optional = true}
-gpytorch = {version = "^1.11", optional = true}
-scikit-learn = {version = "^1.0.0", optional = true}
+ablang2 = {version = "^0.2.1", optional=true}
 fair-esm = {version = "^2.0.0", optional=true}
 
 [tool.poetry.extras]
-boat = ["ablang2", "blosum", "botorch", "gpytorch", "scikit-learn", "fair-esm"]
+plms = ["ablang2", "fair-esm"]
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "*"

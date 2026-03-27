@@ -60,7 +60,7 @@ jobs:
       - name: Pytest genetic algorithm
         uses: ./.github/pytest-feature
         with:
-          extras: "bayesopt"
+          extras: "plms"
           python-version: ${{needs.set-version.outputs.python-version}}
           path: "tests/genetic_algorithm tests/test_data_utils.py"
           artifactory-token: ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
@@ -76,7 +76,7 @@ jobs:
       - name: Pytest bayesopt
         uses: ./.github/pytest-feature
         with:
-          extras: "bayesopt"
+          extras: "plms"
           python-version: ${{needs.set-version.outputs.python-version}}
           path: "tests/bayesopt"
           artifactory-token: ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
@@ -121,7 +121,7 @@ jobs:
       - name: Install poetry dev deps
         shell: bash
         run: |
-          poetry install --extras "bayesopt" --with test
+          poetry install --extras "plms" --with test
 
       - name: Pytest
         shell: bash
@@ -159,7 +159,7 @@ jobs:
       - name: Install poetry dev deps
         shell: bash
         run: |
-          poetry install --extras "bayesopt" --with test
+          poetry install --extras "plms" --with test
 
       - name: Component Tests Bayesian Optimization
         shell: bash
