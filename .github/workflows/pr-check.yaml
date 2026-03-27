@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   set-version:
-    runs-on: azu-biopharmaceuticals-rd-self-hosted-linux
+    runs-on: ubuntu-latest
     outputs:
       python-version: ${{steps.python-version.outputs.version}}
     steps:
@@ -27,7 +27,7 @@ jobs:
   lint:
     needs: set-version
     if: (github.event_name == 'pull_request') && (! contains(github.event.repository.name, 'data-science-template'))
-    runs-on: azu-biopharmaceuticals-rd-self-hosted-linux
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -52,54 +52,103 @@ jobs:
 
   test-ga:
     needs: [set-version]
-    runs-on: azimuth
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Pytest genetic algorithm
-        uses: ./.github/pytest-feature
+      - name: setup-python
+        uses: actions/setup-python@v5
         with:
-          extras: "plms"
           python-version: ${{needs.set-version.outputs.python-version}}
-          path: "tests/genetic_algorithm tests/test_data_utils.py"
-          artifactory-token: ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
-          wandb-token: ""
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Install poetry deps
+        shell: bash
+        run: |
+          poetry install --only main,test --extras "plms"
+
+      - name: Pytest genetic algorithm
+        shell: bash
+        run: |
+          poetry run pytest tests/genetic_algorithm tests/test_data_utils.py
+          poetry run coverage report
+
+      - name: Upload Coverage Data
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ github.job }}
+          path: coverage.xml
 
   test-bayesopt:
     needs: [set-version]
-    runs-on: azimuth
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Pytest bayesopt
-        uses: ./.github/pytest-feature
+      - name: setup-python
+        uses: actions/setup-python@v5
         with:
-          extras: "plms"
           python-version: ${{needs.set-version.outputs.python-version}}
-          path: "tests/bayesopt"
-          artifactory-token: ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
-          wandb-token: ""
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Install poetry deps
+        shell: bash
+        run: |
+          poetry install --only main,test --extras "plms"
+
+      - name: Pytest bayesopt
+        shell: bash
+        run: |
+          poetry run pytest tests/bayesopt
+          poetry run coverage report
+
+      - name: Upload Coverage Data
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ github.job }}
+          path: coverage.xml
 
   test-bio:
     needs: [set-version]
-    runs-on: azimuth
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Pytest biologics
-        uses: ./.github/pytest-feature
+      - name: setup-python
+        uses: actions/setup-python@v5
         with:
           python-version: ${{needs.set-version.outputs.python-version}}
-          path: "tests/biologics"
-          artifactory-token: ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
-          wandb-token: ""
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Install poetry deps
+        shell: bash
+        run: |
+          poetry install --only main,test
+
+      - name: Pytest biologics
+        shell: bash
+        run: |
+          poetry run pytest tests/biologics
+          poetry run coverage report
+
+      - name: Upload Coverage Data
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ github.job }}
+          path: coverage.xml
 
   test-scoring-functions:
     needs: set-version
-    runs-on: azimuth
+    runs-on: ubuntu-latest
     steps:
       - name: setup-python
         uses: actions/setup-python@v5
@@ -111,12 +160,6 @@ jobs:
 
       - name: Install poetry
         run: pip install poetry
-
-      - name: Artifactory and git credentials
-        shell: bash
-        run: |
-          poetry config http-basic.mlab cai-eng@astrazeneca.com ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
-          poetry config http-basic.artifactory cai-eng@astrazeneca.com ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
 
       - name: Install poetry dev deps
         shell: bash
@@ -137,7 +180,7 @@ jobs:
 
   test-bayesian-optimization:
     needs: set-version
-    runs-on: azimuth
+    runs-on: ubuntu-latest
     steps:
       - name: setup-python
         uses: actions/setup-python@v5
@@ -149,12 +192,6 @@ jobs:
 
       - name: Install poetry
         run: pip install poetry
-
-      - name: Artifactory and git credentials
-        shell: bash
-        run: |
-          poetry config http-basic.mlab cai-eng@astrazeneca.com ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
-          poetry config http-basic.artifactory cai-eng@astrazeneca.com ${{ secrets.MLAB_ARTIFACTORY_TOKEN }}
 
       - name: Install poetry dev deps
         shell: bash
@@ -203,7 +240,7 @@ jobs:
   set-package-version:
     needs: [lint, set-version, test-ga, test-scoring-functions, test-bayesopt, test-bio, test-bayesian-optimization]
     if: (! contains(github.event.repository.name, 'data-science-template')) && (github.event_name == 'pull_request') && (github.head_ref != 'main') && (github.head_ref != 'dev')
-    runs-on: "azu-biopharmaceuticals-rd-self-hosted-linux"
+    runs-on: "ubuntu-latest"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
