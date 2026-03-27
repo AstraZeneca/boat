@@ -1,0 +1,45 @@
+experiment: boat_run
+random_seed: 121
+output_dir: "./output"
+restore_from_checkpoint: False
+
+logging:
+  logging_level: "DEBUG"
+  log_to_wandb: False
+  wandb_project: "mobo"
+  wandb_entity: "mlabs"
+
+input:
+  path_to_parental: "data/vhh.fasta"
+  mutations_yaml: "data/mutations.yaml"
+
+objective_functions:
+  - name: oasis
+    description: oasis
+
+bayes_opt:
+  n_iterations: 100
+  model:
+    regression: "TanimotoGP"
+    binary: "TanimotoGPBinary"
+  encoding: "one-hot"  # "one-hot", "blosum", "bag_of_aas", "ablang2"
+  acquisition: "EI" # "qEHVI", "EI", "qEI", "qNEHVI", "EHVI"
+  batch_size: 1
+
+genetic_algorithm:
+  initial_max_mutations: 3
+  initial_population_size: 100
+  population_size: 100
+  max_rounds: 20
+  mutation_rate: 0.1
+  crossover_rate: 0.7
+  repetitions: 10
+  tournament_size: 5
+  liability_filtering: False
+  max_mutations: 10
+  path_probability_matrix:
+  path_cdr_positions: "data/cdrs.yaml"
+  max_mutations_per_cdr:
+    cdr1: 3
+    cdr2: 3
+    cdr3: 5
