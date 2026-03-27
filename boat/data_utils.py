@@ -137,9 +137,7 @@ def read_in_fasta(file_path: str) -> AbVSeq:
         elif chain_id.endswith("L"):
             light_chain = sequence
     if not heavy_chain or not light_chain:
-        sys.exit(
-            f"FASTA file '{file_path}' must contain both heavy ('*H') and light ('*L') chains."
-        )
+        sys.exit(f"FASTA file '{file_path}' must contain both heavy ('*H') and light ('*L') chains.")
 
     return AbVSeq(heavy_chain=heavy_chain, light_chain=light_chain)
 
