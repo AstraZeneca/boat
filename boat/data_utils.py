@@ -129,9 +129,17 @@ def read_in_fasta(file_path: str) -> AbVSeq:
         sys.exit("cannot find fasta files: " + file_path)
 
     # transform to AbVSeq object, assuming the last letter of the chain ID is 'H' for heavy and 'L' for light
-    for chain_id in seq.keys():
-        heavy_chain = seq[chain_id] if chain_id[-1] == "H" else ""
-        light_chain = seq[chain_id] if chain_id[-1] == "L" else ""
+    heavy_chain = ""
+    light_chain = ""
+    for chain_id, sequence in seq.items():
+        if chain_id.endswith("H"):
+            heavy_chain = sequence
+        elif chain_id.endswith("L"):
+            light_chain = sequence
+    if not heavy_chain or not light_chain:
+        sys.exit(
+            f"FASTA file '{file_path}' must contain both heavy ('*H') and light ('*L') chains."
+        )
 
     return AbVSeq(heavy_chain=heavy_chain, light_chain=light_chain)
 
@@ -180,6 +188,8 @@ def library_to_mutations_yaml(
     # Save the mutations to a YAML file
     with open(out_file, "w") as file:
         yaml.dump(mutations, file)
+
+    return mutations
 
 
 def get_mutations_dict(sequences: list, parental: str) -> dict:
