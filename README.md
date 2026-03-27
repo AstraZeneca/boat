@@ -1,13 +1,15 @@
 ![Python version](https://img.shields.io/badge/python-3.10–3.11-blue.svg)
 
-# boat
+# BOAT
 
-A toolkit for one-shot (low-iteration) sequence optimization workflows in biologics R&D.
+A toolkit for Bayesian Optimization of Antibody Traits (BOAT).
+The methods naturally extend to other modalities based on sequences of amino acids.
+
 It combines:
 - Sequence encodings (PLMs, bio-specific embeddings)
-- Bayesian & evolutionary optimization loops
+- Bayesian & genetic optimization loops
 - Liability filtering
-- Scoring interfaces to internal / external models (e.g. PLMs)
+- An interface to wrap models for sequence scoring
 - Modular acquisition & model abstractions for rapid experimentation
 
 The goal: enable fast design-iteration cycles with pluggable scoring functions and flexible optimization strategies.
@@ -15,7 +17,7 @@ The goal: enable fast design-iteration cycles with pluggable scoring functions a
 ## Key Features (overview)
 - Bayesian optimization (single & multi-objective) with BoTorch / GPyTorch
 - Genetic algorithm framework for sequence-level search
-- Encodings: physicochemical, PLM-based, antibody numbering, etc.
+- Encodings: one-hot, physicochemical, PLM-based, etc.
 - Liability and developability scoring utilities
 - Pluggable scoring interfaces (fake, PLM, Oasis, liabilities)
 
@@ -30,16 +32,22 @@ Requires: Python 3.10 or 3.11 (see pyproject). Poetry is used for dependency man
 
 3. Install with selected extras, e.g.:
 ```bash
-poetry install --extras "bayesopt"
+poetry install --extras "plms"
 ```
+
 4. Activate virtual environment:
-   poetry shell
-   or run commands with:
+```bash
+   eval $(poetry env activate)
+```
+
+and run commands with:
+```bash
    poetry run python ...
+```
 
 ## Optional Extras (summary)
 
-- bayesopt: Bayesian optimization stack (ablang2, blosum, botorch, gpytorch, scikit-learn)
+- boat: Bayesian optimization stack (ablang2, blosum, botorch, gpytorch, scikit-learn)
 
 Install any combination via:
 ```bash
@@ -50,10 +58,10 @@ poetry install --extras "<space separated extras>"
 Example (pseudo) usage sketch:
 
 ```python
-from boat.bayesopt.mo_loop import MultiObjectiveLoop
+from boat.bayesopt.mo_loop import MOBayesOptOnSequences
 from boat.scoring_function.fake import FakeScoringFunction
 
-loop = MultiObjectiveLoop(
+loop = MOBayesOptOnSequences(
     scoring_functions=[FakeScoringFunction()],
     n_init=8,
     n_iter=5,
@@ -61,7 +69,7 @@ loop = MultiObjectiveLoop(
 loop.run()
 ```
 
-Replace FakeScoringFunction with real interfaces (PLM, etc.) as configured.
+Replace FakeScoringFunction with real interfaces (PLM, humanness, etc.) as configured.
 
 ## Project Organization
 
@@ -70,10 +78,8 @@ Replace FakeScoringFunction with real interfaces (PLM, etc.) as configured.
 ├── Makefile                 # Common developer shortcuts
 ├── Dockerfile               # Base container recipe
 ├── README.md
-├── data/                    # (Git-ignored) local or mounted datasets
+├── data/                    # Example data
 ├── docs/                    # MkDocs documentation project
-├── models/                  # Serialized models / artifacts (Git LFS / ignored as needed)
-├── notebooks/               # Exploratory / analysis notebooks
 ├── pyproject.toml           # Poetry configuration & extras
 └── boat/
     ├── data_utils.py        # Generic data helpers
