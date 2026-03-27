@@ -1,8 +1,8 @@
 """Run a simple genetic algorithm on selected scoring functions."""
 
 import argparse
-import datetime
 import os
+from datetime import datetime
 from pathlib import Path
 
 import torch.serialization
@@ -58,7 +58,7 @@ class GASumScoringFunction(ScoringFunctionInterface):
         for func in self.scoring_functions:
             weight = 1.0
             if self.weights_per_scoring_fct is not None:
-                weight = float(self.weights_per_scoring_fct.get(func.objective_names[0]), 1.0)
+                weight = float(self.weights_per_scoring_fct.get(func.objective_names[0], 1.0))
 
             scores = func(sequences, *args, **kwargs)[func.objective_names[0]]
             scores = [weight * score for score in scores]

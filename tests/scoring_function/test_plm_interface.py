@@ -8,7 +8,7 @@ from boat.biologics.sequence import AbVSeq
 
 pytest.importorskip("esm")
 
-from boat.scoring_function.plm_interface import ESMInterface
+from boat.scoring_function.plm_interface import ESMInterface  # noqa: E402
 
 
 class DummyAlphabet:
@@ -59,7 +59,7 @@ class DummyModel(torch.nn.Module):
 
 @pytest.fixture
 def checkpoint_path():
-    """Dummy checkpoint path used for mocked ESM loading."""
+    """Define dummy checkpoint path used for mocked ESM loading."""
     return "dummy_esm_checkpoint.pt"
 
 
