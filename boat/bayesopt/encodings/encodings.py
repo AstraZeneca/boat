@@ -79,7 +79,7 @@ class OneHotEncoding(Encoding):
 
         # construct embedding from vocabulary
         self.embds, self.index_dict = build_one_hot(self.vocab)
-        self.embds.to(dtype=self.dtype, device=self.device)
+        self.embds = self.embds.to(dtype=self.dtype, device=self.device)
 
     def __str__(self):
         """Return string identifier of encoding."""
