@@ -31,7 +31,7 @@ plms = ["ablang2", "fair-esm"]
 [tool.poetry.group.dev.dependencies]
 pre-commit = "*"
 ruff = "^0.11.8"
-black = "^23.1.0"
+black = "^26.3.1"
 # gitlint = "^0.19.1"
 mypy = "^1.1.1"
 ipdb = "^0.13.13"
